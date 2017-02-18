@@ -18,32 +18,37 @@ contract JsmnSol {
 
     struct Parser {
         uint pos;
+        uint toknext;
         int toksuper;
     }
 
-    Parser parser;
-    JsmnToken[] tokens;
+    JsmnToken[] storageTokens;
 
-    function jsmnInit() public {
-        parser = Parser(0, -1);
-        tokens.length = 0;
+    function jsmnInit(uint length) internal returns (Parser, JsmnToken[]) {
+        Parser memory p = Parser(0, 0, -1);
+        JsmnToken[] memory t = new JsmnToken[](length);
+        return (p, t);
     }
 
-    function allocateToken() internal returns (uint) {
+    function allocateToken(Parser parser, JsmnToken[] tokens) internal returns (bool, JsmnToken) {
         Info('allocateToken');
-        tokens.length++;
-        tokens[tokens.length - 1] = JsmnToken(JsmnType.UNDEFINED, -1, -1, 0);
-        return tokens.length - 1;
+        if (parser.toknext >= tokens.length) {
+            // no more space in tokens
+            return (false, tokens[tokens.length-1]);
+        }
+        tokens[parser.toknext] = JsmnToken(JsmnType.UNDEFINED, -1, -1, 0);
+        parser.toknext++;
+        return (true, tokens[parser.toknext-1]);
     }
 
-    function fillToken(uint ti, JsmnType jsmnType, int start, int end) {
-        tokens[ti].jsmnType = jsmnType;
-        tokens[ti].start = start;
-        tokens[ti].end = end;
-        tokens[ti].size = 0;
+    function fillToken(JsmnToken token, JsmnType jsmnType, int start, int end) internal {
+        token.jsmnType = jsmnType;
+        token.start = start;
+        token.end = end;
+        token.size = 0;
     }
 
-    function parseString(bytes s) returns (int) {
+    function parseString(Parser parser, JsmnToken[] tokens, bytes s) internal returns (int) {
         uint start = parser.pos;
         uint ti;
         parser.pos++;
@@ -53,8 +58,8 @@ contract JsmnSol {
 
             // Quote -> end of string
             if (c == '"') {
-                ti = allocateToken();
-                fillToken(ti, JsmnType.STRING, int(start+1), int(parser.pos-1));
+                var (result, token) = allocateToken(parser, tokens);
+                fillToken(token, JsmnType.STRING, int(start+1), int(parser.pos-1));
                 return 0;
             }
 
@@ -66,7 +71,7 @@ contract JsmnSol {
         return int(JsmnError.ERROR_PART);
     }
 
-    function parsePrimitive(bytes s) returns (int) {
+    function parsePrimitive(Parser parser, JsmnToken[] tokens, bytes s) internal returns (int) {
         bool found = false;
         uint start = parser.pos;
         byte c;
@@ -89,21 +94,21 @@ contract JsmnSol {
         }
 
         // found the end
-        ti = allocateToken();
-        fillToken(ti, JsmnType.PRIMITIVE, int(start), int(parser.pos));
+        var (result, token) = allocateToken(parser, tokens);
+        fillToken(token, JsmnType.PRIMITIVE, int(start), int(parser.pos));
         parser.pos--;
         return 0;
     }
 
-    function jsmnParse(string json) returns (JsmnError) {
+    function jsmnParse(string json, uint numberElements) returns (JsmnError) {
         bytes memory s = bytes(json);
-        jsmnInit();
+        var (parser, tokens) = jsmnInit(numberElements);
 
         // JsmnToken memory token;
         int r;
         uint ti;
-        uint count = tokens.length;
-        uint128 i;
+        uint count = parser.toknext;
+        uint i;
 
         for (; parser.pos<s.length; parser.pos++) {
             bytes1 c = s[parser.pos];
@@ -113,13 +118,13 @@ contract JsmnSol {
                 Info('Opening parentheses');
                 count++;
                 //token = allocateToken();
-                ti = allocateToken();
+                var (result, token)= allocateToken(parser, tokens);
                 if (parser.toksuper != -1) {
                     tokens[uint(parser.toksuper)].size++;
                 }
-                tokens[ti].jsmnType = (c == 0x7b ? JsmnType.OBJECT : JsmnType.ARRAY);
-                tokens[ti].start = int(parser.pos);
-                parser.toksuper = int(tokens.length - 1);
+                token.jsmnType = (c == 0x7b ? JsmnType.OBJECT : JsmnType.ARRAY);
+                token.start = int(parser.pos);
+                parser.toksuper = int(parser.toknext - 1);
                 continue;
             }
 
@@ -128,7 +133,7 @@ contract JsmnSol {
                 Info('Closing parentheses');
                 JsmnType tokenType = (c == 0x7d ? JsmnType.OBJECT : JsmnType.ARRAY);
                 bool isUpdated = false;
-                for (i=uint128(tokens.length-1); i>=0; i--) {
+                for (i=parser.toknext; i>=0; i--) {
                     //token = tokens[uint(i)];
                     if (tokens[i].start != -1 && tokens[i].end == -1) {
                         if (tokens[i].jsmnType != tokenType) {
@@ -165,7 +170,7 @@ contract JsmnSol {
             // 0x42
             if (c == '"') {
                 Info('Double quote');
-                r = parseString(s);
+                r = parseString(parser, tokens, s);
                 if (r < 0) return JsmnError.INVALID;
                 count++;
 				if (parser.toksuper != -1)
@@ -182,7 +187,7 @@ contract JsmnSol {
             // 0x3a
             if (c == ':') {
                 Info('Colon');
-                parser.toksuper = int(tokens.length -1);
+                parser.toksuper = int(parser.toknext -1);
                 continue;
             }
 
@@ -191,10 +196,10 @@ contract JsmnSol {
                 if (parser.toksuper != -1
                     && tokens[uint(parser.toksuper)].jsmnType != JsmnType.ARRAY
                     && tokens[uint(parser.toksuper)].jsmnType != JsmnType.OBJECT) {
-                        for(i = uint128(tokens.length)-1; i>=0; i--) {
+                        for(i = parser.toknext-1; i>=0; i--) {
                             if (tokens[i].jsmnType == JsmnType.ARRAY || tokens[i].jsmnType == JsmnType.OBJECT) {
                                 if (tokens[i].start != -1 && tokens[i].end == -1) {
-                                    parser.toksuper = i;
+                                    parser.toksuper = int(i);
                                 }
                             }
                         }
@@ -212,7 +217,7 @@ contract JsmnSol {
                         }
                 }
 
-                parsePrimitive(s);
+                parsePrimitive(parser, tokens, s);
 
 
                 continue;
@@ -223,11 +228,15 @@ contract JsmnSol {
                 continue;
             }
         }
+
+        for (i=0; i<parser.toknext; i++) {
+            storageTokens.push(tokens[i]);
+        }
     }
 
     function getAllTokens() {
-        for (uint i=0; i<tokens.length; i++) {
-            JsmnToken t = tokens[i];
+        for (uint i=0; i<storageTokens.length; i++) {
+            JsmnToken t = storageTokens[i];
             TokenInfo(t.jsmnType, t.start, t.end, t.size);
         }
     }
