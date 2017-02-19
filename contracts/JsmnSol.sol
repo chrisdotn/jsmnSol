@@ -3,7 +3,7 @@ pragma solidity ^0.4.2;
 contract JsmnSol {
 
     event Info(string msg);
-    event TokenInfo(JsmnType jsmnType, int start, int end, uint8 size);
+    event TokenInfo(JsmnType jsmnType, uint start, uint end, uint8 size);
     event Debug(int toksuper, int length);
 
     enum JsmnType { UNDEFINED, OBJECT, ARRAY, STRING, PRIMITIVE }
@@ -11,9 +11,9 @@ contract JsmnSol {
 
     struct JsmnToken {
         JsmnType jsmnType;
-        int start;
+        uint start;
         bool startSet;
-        int end;
+        uint end;
         bool endSet;
         uint8 size;
     }
@@ -38,13 +38,13 @@ contract JsmnSol {
             // no more space in tokens
             return (false, tokens[tokens.length-1]);
         }
-        JsmnToken memory token = JsmnToken(JsmnType.UNDEFINED, -1, false, -1, false, 0);
+        JsmnToken memory token = JsmnToken(JsmnType.UNDEFINED, 0, false, 0, false, 0);
         tokens[parser.toknext] = token;
         parser.toknext++;
         return (true, token);
     }
 
-    function fillToken(JsmnToken token, JsmnType jsmnType, int start, int end) internal {
+    function fillToken(JsmnToken token, JsmnType jsmnType, uint start, uint end) internal {
         token.jsmnType = jsmnType;
         token.start = start;
         token.startSet = true;
@@ -67,7 +67,7 @@ contract JsmnSol {
                     parser.pos = start;
                     return int(JsmnError.NO_MEMORY);
                 }
-                fillToken(token, JsmnType.STRING, int(start+1), int(parser.pos));
+                fillToken(token, JsmnType.STRING, start+1, parser.pos);
                 return 0;
             }
 
@@ -107,7 +107,7 @@ contract JsmnSol {
             parser.pos = start;
             return int(JsmnError.NO_MEMORY);
         }
-        fillToken(token, JsmnType.PRIMITIVE, int(start), int(parser.pos));
+        fillToken(token, JsmnType.PRIMITIVE, start, parser.pos);
         parser.pos--;
         return 0;
     }
@@ -137,7 +137,7 @@ contract JsmnSol {
                     tokens[uint(parser.toksuper)].size++;
                 }
                 token.jsmnType = (c == 0x7b ? JsmnType.OBJECT : JsmnType.ARRAY);
-                token.start = int(parser.pos);
+                token.start = parser.pos;
                 token.startSet = true;
                 parser.toksuper = int(parser.toknext - 1);
                 continue;
@@ -157,7 +157,7 @@ contract JsmnSol {
                             return JsmnError.INVALID;
                         }
                         parser.toksuper = -1;
-                        tokens[i].end = int(parser.pos + 1);
+                        tokens[i].end = parser.pos + 1;
                         tokens[i].endSet = true;
                         isUpdated = true;
                         break;
