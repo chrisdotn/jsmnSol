@@ -2,13 +2,10 @@ pragma solidity ^0.4.2;
 
 library JsmnSol {
 
-    event TokenInfo(JsmnType jsmnType, uint start, uint end, uint8 size);
-    event Debug(int toksuper, int length);
-
     enum JsmnType { UNDEFINED, OBJECT, ARRAY, STRING, PRIMITIVE }
     enum JsmnError { INVALID, ERROR_PART, NO_MEMORY}
 
-    struct JsmnToken {
+    struct Token {
         JsmnType jsmnType;
         uint start;
         bool startSet;
@@ -23,26 +20,24 @@ library JsmnSol {
         int toksuper;
     }
 
-    //JsmnToken[] storageTokens;
-
-    function jsmnInit(uint length) internal returns (Parser, JsmnToken[]) {
+    function init(uint length) internal returns (Parser, Token[]) {
         Parser memory p = Parser(0, 0, -1);
-        JsmnToken[] memory t = new JsmnToken[](length);
+        Token[] memory t = new Token[](length);
         return (p, t);
     }
 
-    function allocateToken(Parser parser, JsmnToken[] tokens) internal returns (bool, JsmnToken) {
+    function allocateToken(Parser parser, Token[] tokens) internal returns (bool, Token) {
         if (parser.toknext >= tokens.length) {
             // no more space in tokens
             return (false, tokens[tokens.length-1]);
         }
-        JsmnToken memory token = JsmnToken(JsmnType.UNDEFINED, 0, false, 0, false, 0);
+        Token memory token = Token(JsmnType.UNDEFINED, 0, false, 0, false, 0);
         tokens[parser.toknext] = token;
         parser.toknext++;
         return (true, token);
     }
 
-    function fillToken(JsmnToken token, JsmnType jsmnType, uint start, uint end) internal {
+    function fillToken(Token token, JsmnType jsmnType, uint start, uint end) internal {
         token.jsmnType = jsmnType;
         token.start = start;
         token.startSet = true;
@@ -51,7 +46,7 @@ library JsmnSol {
         token.size = 0;
     }
 
-    function parseString(Parser parser, JsmnToken[] tokens, bytes s) internal returns (int) {
+    function parseString(Parser parser, Token[] tokens, bytes s) internal returns (int) {
         uint start = parser.pos;
         parser.pos++;
 
@@ -77,7 +72,7 @@ library JsmnSol {
         return int(JsmnError.ERROR_PART);
     }
 
-    function parsePrimitive(Parser parser, JsmnToken[] tokens, bytes s) internal returns (int) {
+    function parsePrimitive(Parser parser, Token[] tokens, bytes s) internal returns (int) {
         bool found = false;
         uint start = parser.pos;
         byte c;
@@ -110,11 +105,11 @@ library JsmnSol {
         return 0;
     }
 
-    function jsmnParse(string json, uint numberElements) internal returns (bool, JsmnToken[], uint) {
+    function parse(string json, uint numberElements) internal returns (bool, Token[], uint) {
         bytes memory s = bytes(json);
-        var (parser, tokens) = jsmnInit(numberElements);
+        var (parser, tokens) = init(numberElements);
 
-        // JsmnToken memory token;
+        // Token memory token;
         int r;
         uint count = parser.toknext;
         uint i;
@@ -246,28 +241,6 @@ library JsmnSol {
         }
 
         return (true, tokens, parser.toknext-1);
-
-        /*storageTokens.length = 0;
-        for (i=0; i<parser.toknext; i++) {
-            storageTokens.push(tokens[i]);
-        }*/
-    }
-
-    function bytes32ToString(bytes32 x) constant returns (string) {
-        bytes memory bytesString = new bytes(32);
-        uint charCount = 0;
-        for (uint j = 0; j < 32; j++) {
-            byte char = byte(bytes32(uint(x) * 2 ** (8 * j)));
-            if (char != 0) {
-                bytesString[charCount] = char;
-                charCount++;
-            }
-        }
-        bytes memory bytesStringTrimmed = new bytes(charCount);
-        for (j = 0; j < charCount; j++) {
-            bytesStringTrimmed[j] = bytesString[j];
-        }
-        return string(bytesStringTrimmed);
     }
 
 }
