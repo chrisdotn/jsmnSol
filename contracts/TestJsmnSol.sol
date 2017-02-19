@@ -5,6 +5,7 @@ import "./JsmnSol.sol";
 contract TestJsmnSol {
 
     event TokenInfo(JsmnSol.JsmnType jsmnType, uint start, uint end, uint8 size);
+    event InfoEvent(bytes msg);
 
     function parse(string json, uint len) {
         var (success, tokens, actualNum) = JsmnSol.parse(json, len);
@@ -12,6 +13,21 @@ contract TestJsmnSol {
         if (success) {
             getAllTokens(tokens, actualNum);
         }
+
+        if (success && actualNum > 28) {
+            // FIXME Use substring instead
+            InfoEvent(getBytes(json, tokens[25].start, tokens[25].end));
+        }
+
+    }
+
+    function getBytes(string json, uint from, uint to) returns (bytes) {
+        bytes memory s = bytes(json);
+        bytes memory result = new bytes(to-from);
+        for (uint i=from; i<to; i++) {
+            result[i-from] = s[i];
+        }
+        return result;
     }
 
     function getAllTokens(JsmnSol.Token[] tokens, uint len) internal {

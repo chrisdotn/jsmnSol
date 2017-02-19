@@ -76,7 +76,6 @@ library JsmnSol {
         bool found = false;
         uint start = parser.pos;
         byte c;
-        uint ti;
         for (; parser.pos < s.length; parser.pos++) {
             c = s[parser.pos];
             if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == ','
