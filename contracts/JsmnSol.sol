@@ -12,7 +12,9 @@ contract JsmnSol {
     struct JsmnToken {
         JsmnType jsmnType;
         int start;
+        bool startSet;
         int end;
+        bool endSet;
         uint8 size;
     }
 
@@ -36,15 +38,18 @@ contract JsmnSol {
             // no more space in tokens
             return (false, tokens[tokens.length-1]);
         }
-        tokens[parser.toknext] = JsmnToken(JsmnType.UNDEFINED, -1, -1, 0);
+        JsmnToken memory token = JsmnToken(JsmnType.UNDEFINED, -1, false, -1, false, 0);
+        tokens[parser.toknext] = token;
         parser.toknext++;
-        return (true, tokens[parser.toknext-1]);
+        return (true, token);
     }
 
     function fillToken(JsmnToken token, JsmnType jsmnType, int start, int end) internal {
         token.jsmnType = jsmnType;
         token.start = start;
+        token.startSet = true;
         token.end = end;
+        token.endSet = true;
         token.size = 0;
     }
 
@@ -133,6 +138,7 @@ contract JsmnSol {
                 }
                 token.jsmnType = (c == 0x7b ? JsmnType.OBJECT : JsmnType.ARRAY);
                 token.start = int(parser.pos);
+                token.startSet = true;
                 parser.toksuper = int(parser.toknext - 1);
                 continue;
             }
@@ -142,10 +148,9 @@ contract JsmnSol {
                 Info('Closing parentheses');
                 JsmnType tokenType = (c == 0x7d ? JsmnType.OBJECT : JsmnType.ARRAY);
                 bool isUpdated = false;
-                for (i=parser.toknext -1; i>=0; i--) {
-                    //token = tokens[uint(i)];
+                for (i=parser.toknext-1; i>=0; i--) {
                     token = tokens[i];
-                    if (token.start != -1 && token.end == -1) {
+                    if (token.startSet && !token.endSet) {
                         if (token.jsmnType != tokenType) {
                             // found a token that hasn't been closed but from a different type
                             Info('Error: wrong type');
@@ -153,6 +158,7 @@ contract JsmnSol {
                         }
                         parser.toksuper = -1;
                         tokens[i].end = int(parser.pos + 1);
+                        tokens[i].endSet = true;
                         isUpdated = true;
                         break;
                     }
@@ -163,7 +169,7 @@ contract JsmnSol {
                 }
                 for (; i>0; i--) {
                     token = tokens[uint(i)];
-                    if (token.start != -1 && token.end == -1) {
+                    if (token.startSet && !token.endSet) {
                         parser.toksuper = int(i);
                         break;
                     }
@@ -171,7 +177,7 @@ contract JsmnSol {
 
                 if (i==0) {
                     token = tokens[i];
-                    if (token.start != -1 && token.end == -1) {
+                    if (token.startSet && !token.endSet) {
                         parser.toksuper = uint128(i);
                     }
                 }
@@ -209,7 +215,7 @@ contract JsmnSol {
                     && tokens[uint(parser.toksuper)].jsmnType != JsmnType.OBJECT) {
                         for(i = parser.toknext-1; i>=0; i--) {
                             if (tokens[i].jsmnType == JsmnType.ARRAY || tokens[i].jsmnType == JsmnType.OBJECT) {
-                                if (tokens[i].start != -1 && tokens[i].end == -1) {
+                                if (tokens[i].startSet && !tokens[i].endSet) {
                                     parser.toksuper = int(i);
                                     break;
                                 }
