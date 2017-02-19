@@ -168,7 +168,7 @@ contract JsmnSol {
                     return JsmnError.INVALID;
                 }
                 for (; i>0; i--) {
-                    token = tokens[uint(i)];
+                    token = tokens[i];
                     if (token.startSet && !token.endSet) {
                         parser.toksuper = int(i);
                         break;
