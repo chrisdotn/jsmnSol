@@ -1,8 +1,7 @@
 pragma solidity ^0.4.2;
 
-contract JsmnSol {
+library JsmnSol {
 
-    event Info(string msg);
     event TokenInfo(JsmnType jsmnType, uint start, uint end, uint8 size);
     event Debug(int toksuper, int length);
 
@@ -24,7 +23,7 @@ contract JsmnSol {
         int toksuper;
     }
 
-    JsmnToken[] storageTokens;
+    //JsmnToken[] storageTokens;
 
     function jsmnInit(uint length) internal returns (Parser, JsmnToken[]) {
         Parser memory p = Parser(0, 0, -1);
@@ -33,7 +32,6 @@ contract JsmnSol {
     }
 
     function allocateToken(Parser parser, JsmnToken[] tokens) internal returns (bool, JsmnToken) {
-        Info('allocateToken');
         if (parser.toknext >= tokens.length) {
             // no more space in tokens
             return (false, tokens[tokens.length-1]);
@@ -112,7 +110,7 @@ contract JsmnSol {
         return 0;
     }
 
-    function jsmnParse(string json, uint numberElements) returns (JsmnError) {
+    function jsmnParse(string json, uint numberElements) internal returns (bool, JsmnToken[], uint) {
         bytes memory s = bytes(json);
         var (parser, tokens) = jsmnInit(numberElements);
 
@@ -126,12 +124,11 @@ contract JsmnSol {
 
             // 0x7b, 0x5b opening parentheses
             if (c == 0x7b || c == 0x5b) {
-                Info('Opening parentheses');
                 count++;
-                //token = allocateToken();
                 var (success, token)= allocateToken(parser, tokens);
                 if (!success) {
-                    return JsmnError.NO_MEMORY;
+                    return (false, tokens, 0);
+                    //JsmnError.NO_MEMORY;
                 }
                 if (parser.toksuper != -1) {
                     tokens[uint(parser.toksuper)].size++;
@@ -145,7 +142,6 @@ contract JsmnSol {
 
             // closing parentheses
             if (c == 0x7d || c == 0x5d) {
-                Info('Closing parentheses');
                 JsmnType tokenType = (c == 0x7d ? JsmnType.OBJECT : JsmnType.ARRAY);
                 bool isUpdated = false;
                 for (i=parser.toknext-1; i>=0; i--) {
@@ -153,8 +149,8 @@ contract JsmnSol {
                     if (token.startSet && !token.endSet) {
                         if (token.jsmnType != tokenType) {
                             // found a token that hasn't been closed but from a different type
-                            Info('Error: wrong type');
-                            return JsmnError.INVALID;
+                            return (false, tokens, 0);
+                            //JsmnError.INVALID;
                         }
                         parser.toksuper = -1;
                         tokens[i].end = parser.pos + 1;
@@ -164,8 +160,8 @@ contract JsmnSol {
                     }
                 }
                 if (!isUpdated) {
-                    Info('Error: No update');
-                    return JsmnError.INVALID;
+                    return (false, tokens, 0);
+                    //JsmnError.INVALID;
                 }
                 for (; i>0; i--) {
                     token = tokens[i];
@@ -186,9 +182,9 @@ contract JsmnSol {
 
             // 0x42
             if (c == '"') {
-                Info('Double quote');
                 r = parseString(parser, tokens, s);
-                if (r < 0) return JsmnError.INVALID;
+                if (r < 0) return (false, tokens, 0);
+                //JsmnError.INVALID;
                 count++;
 				if (parser.toksuper != -1)
 					tokens[uint(parser.toksuper)].size++;
@@ -197,19 +193,16 @@ contract JsmnSol {
 
             // ' ', \r, \t, \n
             if (c == ' ' || c == 0x11 || c == 0x12 || c == 0x14) {
-                Info('Whitespace');
                 continue;
             }
 
             // 0x3a
             if (c == ':') {
-                Info('Colon');
                 parser.toksuper = int(parser.toknext -1);
                 continue;
             }
 
             if (c == ',') {
-                Info('Comma');
                 if (parser.toksuper != -1
                     && tokens[uint(parser.toksuper)].jsmnType != JsmnType.ARRAY
                     && tokens[uint(parser.toksuper)].jsmnType != JsmnType.OBJECT) {
@@ -226,17 +219,19 @@ contract JsmnSol {
             }
 
             if ((c >= '0' && c <= '9') || c == 'f' || c == 't' || c == 'n') {
-                Info('Primitive');
                 if (parser.toksuper != -1) {
                     token = tokens[uint(parser.toksuper)];
                     if (token.jsmnType == JsmnType.OBJECT
                         || (token.jsmnType == JsmnType.STRING && token.size != 0)) {
-                            return JsmnError.INVALID;
+                            return (false, tokens, 0);
+                            // JsmnError.INVALID;
                         }
                 }
 
                 r = parsePrimitive(parser, tokens, s);
-                if (r < 0) { return JsmnError.INVALID; }
+                if (r < 0) { return (false, tokens, 0);
+                    // JsmnError.INVALID;
+                }
                 count++;
                 if (parser.toksuper != -1) {
                     tokens[uint(parser.toksuper)].size++;
@@ -244,23 +239,18 @@ contract JsmnSol {
                 continue;
             }
 
+            // printable char
             if (c >= 0x20 && c <= 0x7e) {
-                Info('Printable char');
                 continue;
             }
         }
 
-        storageTokens.length = 0;
+        return (true, tokens, parser.toknext-1);
+
+        /*storageTokens.length = 0;
         for (i=0; i<parser.toknext; i++) {
             storageTokens.push(tokens[i]);
-        }
-    }
-
-    function getAllTokens() {
-        for (uint i=0; i<storageTokens.length; i++) {
-            JsmnToken t = storageTokens[i];
-            TokenInfo(t.jsmnType, t.start, t.end, t.size);
-        }
+        }*/
     }
 
     function bytes32ToString(bytes32 x) constant returns (string) {
