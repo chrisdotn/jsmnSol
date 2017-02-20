@@ -31,6 +31,6 @@ The `start` and `end` members are the index values for the token. `jsmnType` can
 enum JsmnType { UNDEFINED, OBJECT, ARRAY, STRING, PRIMITIVE }
 ```
 The parser treats all primitives (ie. `number`, `boolean` or `null` as the same type. They can be distinguised by comparing the first character. These are the possibilities:
-    - `0–9`: The primitive is a number.
-    - `t` or `f`: The primitive is a boolean.
-    - `n`: The primitive is `null`.
+ - `0–9`: The primitive is a number.
+ - `t` or `f`: The primitive is a boolean.
+ - `n`: The primitive is `null`.
