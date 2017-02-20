@@ -241,5 +241,4 @@ library JsmnSol {
 
         return (true, tokens, parser.toknext-1);
     }
-
 }
