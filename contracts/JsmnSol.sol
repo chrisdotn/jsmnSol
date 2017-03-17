@@ -243,4 +243,14 @@ library JsmnSol {
 
         return (true, tokens, parser.toknext-1);
     }
+
+    function getBytes(string json, uint start, uint end) internal returns (string) {
+        bytes memory s = bytes(json);
+        bytes memory result = new bytes(end-start);
+        for (uint i=start; i<end; i++) {
+            result[i-start] = s[i];
+        }
+        return string(result);
+    }
+
 }

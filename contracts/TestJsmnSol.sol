@@ -25,17 +25,10 @@ contract TestJsmnSol {
         if (i+1<t.length) {
             JsmnSol.Token memory t_key = t[i];
             JsmnSol.Token memory t_val = t[i+1];
-            InfoEvent(getBytes(s, t_key.start, t_key.end), getBytes(s, t_val.start, t_val.end));
+            string memory key = JsmnSol.getBytes(s, t_key.start, t_key.end);
+            string memory value = JsmnSol.getBytes(s, t_val.start, t_val.end);
+            InfoEvent(key, value);
         }
-    }
-
-    function getBytes(string json, uint from, uint to) returns (string) {
-        bytes memory s = bytes(json);
-        bytes memory result = new bytes(to-from);
-        for (uint i=from; i<to; i++) {
-            result[i-from] = s[i];
-        }
-        return string(result);
     }
 
     function getAllTokens(JsmnSol.Token[] tokens, uint len) internal {
