@@ -1,6 +1,6 @@
 pragma solidity ^0.4.2;
 
-library JsmnSol {
+library JsmnSolLib {
 
     enum JsmnType { UNDEFINED, OBJECT, ARRAY, STRING, PRIMITIVE }
     enum JsmnError { INVALID, ERROR_PART, NO_MEMORY}
