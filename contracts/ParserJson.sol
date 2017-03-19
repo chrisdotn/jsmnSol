@@ -4,10 +4,15 @@ import "./JsmnSolLib.sol";
 
 contract ParserJson {
 
-    function parse(string json, uint len) returns (bool, uint) {
+    event Result(bool success, uint actualNum);
+    event Info(string msg);
+
+    function parse(string json, uint len) returns (bool) {
 
         var (success, tokens, actualNum) = JsmnSolLib.parse(json, len);
-        return (success, actualNum);
+        Info('Parsed msg');
+        Result(success, actualNum);
+        return success;
     }
 
 }
