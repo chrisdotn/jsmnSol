@@ -178,7 +178,10 @@ library JsmnSolLib {
             // 0x42
             if (c == '"') {
                 r = parseString(parser, tokens, s);
-                if (r < 0) return (RETURN_ERROR_INVALID_JSON, tokens, 0);
+
+                if (r < 0) {
+                    return (RETURN_ERROR_INVALID_JSON, tokens, 0);
+                }
                 //JsmnError.INVALID;
                 count++;
 				if (parser.toksuper != -1)
@@ -225,7 +228,8 @@ library JsmnSolLib {
                 }
 
                 r = parsePrimitive(parser, tokens, s);
-                if (r < 0) { return (RETURN_ERROR_INVALID_JSON, tokens, 0);
+                if (r < 0) {
+                    return (RETURN_ERROR_INVALID_JSON, tokens, 0);
                 }
                 count++;
                 if (parser.toksuper != -1) {
@@ -267,7 +271,7 @@ library JsmnSolLib {
             if ((i == 0) && (bresult[i] == '-')) {
                 negative = true;
             }
-            if ((bresult[i] >= 48)&&(bresult[i] <= 57)){
+            if ((bresult[i] >= 48) && (bresult[i] <= 57)) {
                 if (decimals){
                    if (_b == 0) break;
                     else _b--;
