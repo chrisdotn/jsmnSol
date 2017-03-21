@@ -21,8 +21,6 @@ contract TestObjects {
 
         JsmnSolLib.Token memory t = tokens[2];
 
-
-
         Assert.equal(returnValue, RETURN_SUCCESS, 'Valid JSON should return a success.');
         Assert.isTrue(t.jsmnType == JsmnSolLib.JsmnType.OBJECT, 'Not an object');
     }
