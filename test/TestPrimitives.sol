@@ -67,17 +67,20 @@ contract TestPrimitives {
     }
 
     function testFloatKeyValue() {
-        string memory json = '{"key": 23.45}';
+        string memory json = '{"key": 23.45, "key2": 5, "key3": "23.66", "key4": "236.6"}';
 
         uint returnValue;
         JsmnSolLib.Token[] memory tokens;
         uint actualNum;
 
-        (returnValue, tokens, actualNum) = JsmnSolLib.parse(json, 5);
+        (returnValue, tokens, actualNum) = JsmnSolLib.parse(json, 10);
 
         Assert.equal(returnValue, RETURN_SUCCESS, 'Valid JSON should return a success.');
         Assert.equal(JsmnSolLib.getBytes(json, tokens[1].start, tokens[1].end), 'key', 'Not equal');
         Assert.equal(JsmnSolLib.parseInt(JsmnSolLib.getBytes(json, tokens[2].start, tokens[2].end), 1), 234, 'Not equal');
+        Assert.equal(JsmnSolLib.parseInt(JsmnSolLib.getBytes(json, tokens[4].start, tokens[4].end), 4), 50000, 'Not equal');
+        Assert.equal(JsmnSolLib.parseInt(JsmnSolLib.getBytes(json, tokens[6].start, tokens[6].end), 2), 2366, 'Not equal');
+        Assert.equal(JsmnSolLib.parseInt(JsmnSolLib.getBytes(json, tokens[8].start, tokens[8].end), 2), 23660, 'Not equal');
     }
 
 }
