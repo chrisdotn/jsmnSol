@@ -217,7 +217,6 @@ library JsmnSolLib {
             }
 
             // Primitive
-            // FIXME Doesn't handle negative numbers (Can I just include '-'?)
             if ((c >= '0' && c <= '9') || c == '-' || c == 'f' || c == 't' || c == 'n') {
                 if (parser.toksuper != -1) {
                     token = tokens[uint(parser.toksuper)];
