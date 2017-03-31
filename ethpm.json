@@ -1,0 +1,14 @@
+{
+  "package_name": "jsmnsol-lib",
+  "version": "0.0.1",
+  "description": "JSON parser for Solidity",
+  "authors": [
+    "Christoph Niemann <christoph@niemannsland.de>"
+  ],
+  "keywords": [
+    "ethereum",
+    "json",
+    "parser"
+  ],
+  "license": "MIT"
+}
