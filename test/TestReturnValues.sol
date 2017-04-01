@@ -3,7 +3,7 @@ pragma solidity ^0.4.5;
 import "truffle/Assert.sol";
 import "../contracts/JsmnSolLib.sol";
 
-contract TestErrors {
+contract TestReturnValues {
 
     uint constant RETURN_SUCCESS = 0;
     uint constant RETURN_ERROR_INVALID_JSON = 1;
