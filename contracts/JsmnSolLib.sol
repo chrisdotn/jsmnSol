@@ -243,7 +243,7 @@ library JsmnSolLib {
             }
         }
 
-        return (RETURN_SUCCESS, tokens, parser.toknext-1);
+        return (RETURN_SUCCESS, tokens, parser.toknext);
     }
 
     function getBytes(string json, uint start, uint end) internal returns (string) {

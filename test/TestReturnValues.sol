@@ -28,4 +28,18 @@ contract TestReturnValues {
         Assert.equal(returnValue, RETURN_ERROR_NO_MEM, 'There should not have been enough tokens to store the json.');
     }
 
+    function testNumberOfElements() {
+        string memory json = '{ "key": "value", "key_2": 23, "key_3": true }';
+
+        uint returnValue;
+        JsmnSolLib.Token[] memory tokens;
+        uint actualNum;
+
+        (returnValue, tokens, actualNum) = JsmnSolLib.parse(json, 10);
+
+        Assert.equal(returnValue, RETURN_SUCCESS, 'Should have returned SUCCESS');
+        Assert.equal(actualNum, 7, 'Should have returned the correct # of elements');
+
+    }
+
 }
