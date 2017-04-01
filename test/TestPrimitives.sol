@@ -24,6 +24,45 @@ contract TestPrimitives {
         Assert.equal(JsmnSolLib.getBytes(json, tokens[2].start, tokens[2].end), 'value', 'Not equal');
     }
 
+    function testLongerJson() {
+        string memory json = '{ "key1": { "key1.1": "value", "key1.2": 3, "key1.3": true, "key1.4": "val2"} }';
+
+        uint returnValue;
+        JsmnSolLib.Token[] memory tokens;
+        uint actualNum;
+
+        JsmnSolLib.Token memory t;
+
+        (returnValue, tokens, actualNum) = JsmnSolLib.parse(json, 20);
+        Assert.equal(returnValue, RETURN_SUCCESS, 'Valid JSON should return a success.');
+        t = tokens[1];
+        Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'key1', 'Not equal');
+
+        t = tokens[3];
+        Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'key1.1', 'Not equal');
+
+        t = tokens[4];
+        Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'value', 'Not equal');
+
+        t = tokens[5];
+        Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'key1.2', 'Not equal');
+
+        t = tokens[6];
+        Assert.equal(JsmnSolLib.parseInt(JsmnSolLib.getBytes(json, t.start, t.end)), 3, 'Not equal');
+
+        t = tokens[7];
+        Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'key1.3', 'Not equal');
+
+        t = tokens[8];
+        Assert.equal(JsmnSolLib.parseBool(JsmnSolLib.getBytes(json, t.start, t.end)), true, 'Not equal');
+
+        t = tokens[9];
+        Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'key1.4', 'Not equal');
+
+        t = tokens[10];
+        Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'val2', 'Not equal');
+    }
+
     function testIntegerKeyValue() {
         string memory json = '{"key": 23}';
 
