@@ -1,0 +1,35 @@
+{
+    "fixture": {
+        "_links": {
+            "self": {
+                "href": "http://api.football-data.org/v1/fixtures/152250"
+            },
+            "competition": {
+                "href": "http://api.football-data.org/v1/competitions/430"
+            },
+            "homeTeam": {
+                "href": "http://api.football-data.org/v1/teams/16"
+            },
+            "awayTeam": {
+                "href": "http://api.football-data.org/v1/teams/11"
+            }
+        },
+        "date": "2016-08-27T13:30:00Z",
+        "status": "FINISHED",
+        "matchday": 1,
+        "homeTeamName": "FC Augsburg",
+        "awayTeamName": "VfL Wolfsburg",
+        "result": {
+            "goalsHomeTeam": 0,
+            "goalsAwayTeam": 2
+        },
+        "odds": {
+            "homeWin": 3.0,
+            "draw": 3.3,
+            "awayWin": 2.37
+        }
+    }
+}
+
+
+{ "goalsHomeTeam": 0, "goalsAwayTeam": 2 }
