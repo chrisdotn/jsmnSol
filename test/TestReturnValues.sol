@@ -23,18 +23,28 @@ contract TestReturnValues {
     }
 
     function testUnescapedQuoteInString() {
-        string memory json = '{ "key1": { "key1.1": "value", "key1"2": 3, "key1.3": true } }'
-;
-
+        string memory json = '{ "key1": { "key1.1": "value", "key1"2": 3, "key1.3": true } }';
         uint returnValue;
         JsmnSolLib.Token[] memory tokens;
         uint actualNum;
-
         (returnValue, tokens, actualNum) = JsmnSolLib.parse(json, 20);
 
         Assert.equal(returnValue, RETURN_ERROR_INVALID_JSON, 'An unescaped quote should result in a RETURN_ERROR_INVALID_JSON');
-
     }
+
+    function testEscapedQuoteInString() {
+        string memory json = '{ "k": "a\\"b" }';
+        uint returnValue;
+        JsmnSolLib.Token[] memory tokens;
+        uint actualNum;
+        (returnValue, tokens, actualNum) = JsmnSolLib.parse(json, 20);
+        JsmnSolLib.Token memory t = tokens[2];
+
+        Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'a\\"b', 'An escape quote should be preserved.');
+        Assert.equal(t.start, 8, 'Wrong start value for token');
+        Assert.equal(t.end, 12, 'Wrong end value for token');
+    }
+
 
     function testNumberOfElements() {
         string memory json = '{ "key": "value", "key_2": 23, "key_3": true }';

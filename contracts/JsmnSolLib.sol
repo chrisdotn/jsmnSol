@@ -68,10 +68,20 @@ library JsmnSolLib {
                 return RETURN_SUCCESS;
             }
 
-            if (c == '\\') {
-                // TODO handle escaped characters
+            if (c == 92 && parser.pos + 1 < s.length) {
+                // handle escaped characters: skip over it
+                parser.pos++;
+                if (s[parser.pos] == '\"' || s[parser.pos] == '/' || s[parser.pos] == '\\'
+                    || s[parser.pos] == 'f' || s[parser.pos] == 'r' || s[parser.pos] == 'n'
+                    || s[parser.pos] == 'b' || s[parser.pos] == 't') {
+                        continue;
+                        } else {
+                            // all other values are INVALID
+                            parser.pos = start;
+                            return(RETURN_ERROR_INVALID_JSON);
+                        }
+                    }
             }
-        }
         parser.pos = start;
         return RETURN_ERROR_PART;
     }
@@ -179,8 +189,8 @@ library JsmnSolLib {
             if (c == '"') {
                 r = parseString(parser, tokens, s);
 
-                if (r < 0) {
-                    return (RETURN_ERROR_INVALID_JSON, tokens, 0);
+                if (r != RETURN_SUCCESS) {
+                    return (r, tokens, 0);
                 }
                 //JsmnError.INVALID;
                 count++;
@@ -227,8 +237,8 @@ library JsmnSolLib {
                 }
 
                 r = parsePrimitive(parser, tokens, s);
-                if (r < 0) {
-                    return (RETURN_ERROR_INVALID_JSON, tokens, 0);
+                if (r != RETURN_SUCCESS) {
+                    return (r, tokens, 0);
                 }
                 count++;
                 if (parser.toksuper != -1) {
