@@ -67,7 +67,7 @@ string memory jsonElement = getBytes(json, t.start, t.end);
 ### parseInt
 parseInt comes in two flavors:
 1. `function parseInt(string _a) internal returns (int)`: The version with one input parameter returns an `int` from a string. It is useful for strings known to contain an integer value.
-2. `function parseInt(string _a, uint _b) internal returns (int)`: The version with two input parameters is useful for parsing floating-point numbers. Because Solidity itself doesn't allow to use floating-point numbers, the `parseInt` will return the integer part + the number of decimal places specified by `_b`. The entire value is multiplied by 10<sup>_b</sup>.
+2. `function parseInt(string _a, uint _b) internal returns (int)`: The version with two input parameters is useful for parsing floating-point numbers. Because Solidity itself doesn't allow to use floating-point numbers, the `parseInt` will return the integer part + the number of decimal places specified by `_b`. The entire value is multiplied by 10<sup>\_b</sup>.
 
 #### Examples
 The function will return these values:
