@@ -37,7 +37,7 @@ The library is available on [Github](https://github.com/chrisdotn/jsmnSol) or on
 
 The library basically requires only one call: `function parse(string json, uint numberElements) internal returns (uint, Token[], uint)`. This call takes two input parameters:
 - `string json`: The string containing the JSON
-- `uint numberOfTokens`: The maximum number of tokens to allocate for parsing. This parameter ensures reasonable gas consumption. Whenever the string has more objects than `numberOfTokens` allows, the parser returns with an error.
+- `uint numberOfT3okens`: The maximum number of tokens to allocate for parsing. This parameter ensures reasonable gas consumption. Whenever the string has more objects than `numberOfTokens` allows, the parser returns with an error.
 
 After parsing, it returns the three values `(uint returnCode, Token[] tokens, uint actualNumber)`. These are:
 - `uint returnCode`: The `returnCode` indicates whether or not the call was successful. A value of `0` shows a successful parsing, any non-zero value marks an error. The valid values are:
@@ -47,12 +47,13 @@ uint constant RETURN_ERROR_INVALID_JSON = 1;
 uint constant RETURN_ERROR_PART = 2;
 uint constant RETURN_ERROR_NO_MEM = 3;
 ```
+
 - `Token[] tokens`: The array with the actual result of the parsing, the tokens. It has `tokens.length == numberElements` (i.e. the value of the input parameter), but not all tokens have useful values.
 - `uint actualNumber`: The number of parsed tokens in `tokens`. Only tokens from `0`–`(actualNumber-1)` contain useful tokens. The remaining values in the array (`actualNumber`–`tokens.length`) only contain the default values and can be disregarded for further processing.
 
 ### A Simple Example
 The JSON that we want to parse is this:
-```json
+```
 {
     "key1": {
         "key1.1": "value",
@@ -61,7 +62,8 @@ The JSON that we want to parse is this:
     }
 }
 ```
-The actual JSON that we pass to the parser is a minified version of the JSON above so that we have the following string: ```{ "key1": { "key1.1": "value", "key1.2": 3, "key1.3": true } }```.
+
+The actual JSON that we pass to the parser is a minified version of the JSON above so that we have the following string: `{ "key1": { "key1.1": "value", "key1.2": 3, "key1.3": true } }`.
 
 After a call to `parse(json, 10)`, the parser would return three values:
  - `uint`: The return value. It is zero for _success_ and non-zero for _errors_
@@ -70,22 +72,22 @@ After a call to `parse(json, 10)`, the parser would return three values:
 
  The token array would look like this:
 
-| # | JsmnType | start | end | startSet | endSet | size |
-|---|---|---|---|---|---|---|
-| 0 | OBJECT    |  0 | 62 | true  | true  | 1 |
-| 1 | STRING    |  3 |  7 | true  | true  | 1 |
-| 2 | OBJECT    | 10 | 60 | true  | true  | 3 |
-| 3 | STRING    | 13 | 19 | true  | true  | 1 |
-| 4 | STRING    | 23 | 28 | true  | true  | 0 |
-| 5 | STRING    | 32 | 38 | true  | true  | 1 |
-| 6 | PRIMITIVE | 41 | 42 | true  | true  | 0 |
-| 7 | STRING    | 45 | 51 | true  | true  | 1 |
-| 8 | PRIMITIVE | 54 | 58 | true  | true  | 0 |
-| 9 | UNDEFINED |  0 |  0 | false | false | 0 |
+| # | JsmnType  | start | end | startSet | endSet | size |
+|---|-----------|-------|-----|----------|--------|------|
+| 0 | OBJECT    |     0 |  62 | true     | true   |    1 |
+| 1 | STRING    |     3 |   7 | true     | true   |    1 |
+| 2 | OBJECT    |    10 |  60 | true     | true   |    3 |
+| 3 | STRING    |    13 |  19 | true     | true   |    1 |
+| 4 | STRING    |    23 |  28 | true     | true   |    0 |
+| 5 | STRING    |    32 |  38 | true     | true   |    1 |
+| 6 | PRIMITIVE |    41 |  42 | true     | true   |    0 |
+| 7 | STRING    |    45 |  51 | true     | true   |    1 |
+| 8 | PRIMITIVE |    54 |  58 | true     | true   |    0 |
+| 9 | UNDEFINED |     0 |   0 | false    | false  |    0 |
 
 ## Use Case: Response Data From an Oracle
 One of the possible use cases for the parser is processing an oracle response. For instance, if you are using oraclize.it as oracle, the data that is returned in the callback is most likely a JSON string that is the result of a call to a REST API. Usually these responses include all kinds of data that is probably not relevant for the smart contract. It might, however, be the case that the contract is not only interested in one specific datum from the JSON, but more than one. An example would be a bet for a football match: A call to an API (this one specifically is the response of `GET https://api.football-data.org/v1/fixtures/152250?head2head=0`) returns the result of the match as JSON:
-```json
+```
 {
     "fixture": {
         "_links": {
@@ -119,11 +121,12 @@ One of the possible use cases for the parser is processing an oracle response. F
     }
 }
 ```
+
 For winner determination the only interesting part of that response is the `result` part of the response. From that result part, we need two elements, namely the number for `goalsHomeTeam` and the number of `goalsAwayTeam`. We need to compare the numbers to decide on the winner of the match. There are two steps to facilitate processing of the response:
 
 ### Reduce The Result to Fewer Elements...
 The first step to make that reponse useful is to reduce it to the actually needed parts. oraclize.it provides a means to filter a response from a server with [JSONPath](http://goessner.net/articles/JsonPath/)). By filtering the response with `$.fixture.result` oraclize would only return the following part of the JSON to our smart contract (again as a minified string actually):
-```json
+```
 {
     "goalsHomeTeam": 0,
     "goalsAwayTeam": 2
@@ -133,13 +136,13 @@ The first step to make that reponse useful is to reduce it to the actually neede
 ### ...And Parse Them
 This bit is much less expensive to process on-chain. We can use the parser to parse this string. It would return the following tokens:
 
-| # | JsmnType | start | end | startSet | endSet | size |
-|---|---|---|---|---|---|---|
-| 0 | OBJECT    |  0 | 42 | true  | true  | 2 |
-| 1 | STRING    |  3 | 16 | true  | true  | 1 |
-| 2 | PRIMITIVE | 19 | 20 | true  | true  | 0 |
-| 3 | STRING    | 23 | 36 | true  | true  | 1 |
-| 4 | PRIMITIVE | 39 | 40 | true  | true  | 0 |
+| # | JsmnType  | start | end | startSet | endSet | size |
+|---|-----------|-------|-----|----------|--------|------|
+| 0 | OBJECT    |     0 |  42 | true     | true   |    2 |
+| 1 | STRING    |     3 |  16 | true     | true   |    1 |
+| 2 | PRIMITIVE |    19 |  20 | true     | true   |    0 |
+| 3 | STRING    |    23 |  36 | true     | true   |    1 |
+| 4 | PRIMITIVE |    39 |  40 | true     | true   |    0 |
 
 Now we can use the two tokens `token[2]` and `token[4]` to access the two interesting numbers. To extract the substring for `token[2]` we would call: `string goalsHT_string = getBytes(json, token[2].start, token[2].end)`. This call returns a string. To do useful comparisons on the actual numbers, we still need to convert that string to a `uint`. A call to `uint goalsHT = parseInt(goalsHT_string)` accomplishes that.
 
