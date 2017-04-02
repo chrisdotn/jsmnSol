@@ -335,9 +335,7 @@ library JsmnSolLib {
     function parseBool(string _a) returns (bool) {
         if (strCompare(_a, 'true') == 0) {
             return true;
-        }
-
-        if (strCompare(_a, 'false') == 0) {
+        } else {
             return false;
         }
     }
