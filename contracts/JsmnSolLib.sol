@@ -120,7 +120,7 @@ library JsmnSolLib {
         for (; parser.pos<s.length; parser.pos++) {
             bytes1 c = s[parser.pos];
 
-            // 0x7b, 0x5b opening parentheses
+            // 0x7b, 0x5b opening curly parentheses or brackets
             if (c == 0x7b || c == 0x5b) {
                 count++;
                 var (success, token)= allocateToken(parser, tokens);
@@ -137,7 +137,7 @@ library JsmnSolLib {
                 continue;
             }
 
-            // closing parentheses
+            // closing curly parentheses or brackets
             if (c == 0x7d || c == 0x5d) {
                 JsmnType tokenType = (c == 0x7d ? JsmnType.OBJECT : JsmnType.ARRAY);
                 bool isUpdated = false;
@@ -239,7 +239,7 @@ library JsmnSolLib {
 
             // printable char
             if (c >= 0x20 && c <= 0x7e) {
-                continue;
+                return (RETURN_ERROR_INVALID_JSON, tokens, 0);
             }
         }
 
