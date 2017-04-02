@@ -1,13 +1,13 @@
 # jsmnSol
 `jsmnSol` is a port of the [jsmn](https://github.com/zserge/jsmn) JSON parser to Solidity, originally written in C. Its main purpose is to parse **small** JSON data on chain. Because string handling is complicated in Solidity and particularly expensive the usage should be restricted to small JSON data. However, it can help to reduce calls to oracles and deal with the responses on chain.
 
+## Installation
+There are two ways to use the library:
+ 1. Clone the repository using `git clone`. This will give you all the files including the parser, the tests and everything in between. To use it in your project you then need to import the `JsmnSolLib.sol` into your project.
+ 2. If you are using truffle as a framework, you can use the ethpm package manager and just run a `truffle install jsmnsol-lib`. This will install the library into a folder named `installed_contracts`. In your contract you can then import it using `import jsmnsol-lib/JsmnSolLib.sol`.
+
 
 ## Usage
-JsmnSol is a library that can be imported with
-```
-import '${PATH_TO_FILE}/JsmnSol.sol';
-```
-
 There is pretty much one interesting function only:
 ```
 function parse(string json, uint numberElements) internal returns (bool, Token[], uint)
@@ -60,7 +60,18 @@ string memory jsonElement = getBytes(json, t.start, t.end);
 ```
 
 ### parseBool
+`parseBool(string _a) returns (bool)` will take a string as input and return a `Boolean`. The return value will be:
+- `true` if and only if `_a == 'true'`
+- `false` in all other cases
 
 ### parseInt
+parseInt comes in two flavors:
+1. `function parseInt(string _a) internal returns (int)`: The version with one input parameter returns an `int` from a string. It is useful for strings known to contain an integer value.
+2. `function parseInt(string _a, uint _b) internal returns (int)`: The version with two input parameters is useful for parsing floating-point numbers. Because Solidity itself doesn't allow to use floating-point numbers, the `parseInt` will return the integer part + the number of decimal places specified by `_b`. The entire value is multiplied by 10<sup>_b</sup>.
 
-### parseFloat
+#### Examples
+The function will return these values:
+- `parseInt('34')`: 34
+- `parseInt('34.45', 1)`: 344
+- `parseInt('34.45', 2)`: 3445
+- `parseInt('34.45', 3)`: 34450
