@@ -34,9 +34,10 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: |
-        docker run -d -p 8545:8545 --name testrpc wbuchwalter/testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
-        truffle test
+      - run:
+          command: |
+            docker run -d -p 8545:8545 --name testrpc wbuchwalter/testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
+            truffle test
 
       - store_artifacts:
         path: test-results.xml
