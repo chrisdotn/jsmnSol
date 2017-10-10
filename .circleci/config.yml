@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: desmart/truffle
+      - image: chrisdotn/truffle-docker:0.0.1
       - image: wbuchwalter/testrpc
         command: testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
 
@@ -37,7 +37,7 @@ jobs:
 
       # run tests!
       - run:
-          command: truffle test
+          command: test
             # docker run -d -p 8545:8545 --name testrpc wbuchwalter/testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
             # truffle test
 
