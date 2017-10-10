@@ -8,6 +8,8 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/node:7.10
+      - image: wbuchwalter/testrpc
+        command: testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -35,9 +37,9 @@ jobs:
 
       # run tests!
       - run:
-          command: |
-            docker run -d -p 8545:8545 --name testrpc wbuchwalter/testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
-            truffle test
+          command: truffle test
+            # docker run -d -p 8545:8545 --name testrpc wbuchwalter/testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
+            # truffle test
 
       - store_artifacts:
           path: test-results.xml
