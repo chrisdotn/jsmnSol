@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: docker pull desmart/truffle
+      - image: desmart/truffle
       - image: wbuchwalter/testrpc
         entrypoint: testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
 
