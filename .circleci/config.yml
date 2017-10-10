@@ -9,7 +9,7 @@ jobs:
       # specify the version you desire here
       - image: desmart/truffle
       - image: wbuchwalter/testrpc
-        entrypoint: testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
+        command: testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
