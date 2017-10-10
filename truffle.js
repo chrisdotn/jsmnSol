@@ -1,7 +1,7 @@
-var HDWalletProvider = require("truffle-hdwallet-provider");
+//var HDWalletProvider = require("truffle-hdwallet-provider");
 
 // 12-word mnemonic
-var mnemonic = "onyx aloof polio bronco spearfish clustered refined earflap darkroom slashing casualty curled";
+//var mnemonic = "onyx aloof polio bronco spearfish clustered refined earflap darkroom slashing casualty curled";
 
 module.exports = {
     networks: {
