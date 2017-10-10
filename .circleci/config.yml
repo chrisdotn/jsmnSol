@@ -40,4 +40,4 @@ jobs:
             truffle test
 
       - store_artifacts:
-        path: test-results.xml
+          path: test-results.xml
