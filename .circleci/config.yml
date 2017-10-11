@@ -37,13 +37,13 @@ jobs:
 
       # run tests!
       - run:
-          command: truffle test
-            # docker run -d -p 8545:8545 --name testrpc wbuchwalter/testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
-            # truffle test
+          command: |
+            mkdir -p ${TEST_REPORTS}
+            truffle test
+            cp test-results.xml ${TEST_REPORTS}
 
       - store_artifacts:
           path: test-results.xml
-          destination: $CIRCLE_TEST_REPORTS/reports
 
       - store_test_results:
-          path: test-results.xml
+          path: /tmp/test-reports
