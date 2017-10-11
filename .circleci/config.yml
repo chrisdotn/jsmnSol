@@ -43,6 +43,7 @@ jobs:
 
       - store_artifacts:
           path: test-results.xml
+          prefix: $CIRCLE_TEST_REPORTS/reports
 
       - store_test_results:
           path: test-results.xml
