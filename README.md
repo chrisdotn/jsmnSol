@@ -1,4 +1,6 @@
 # jsmnSol
+Build: [![CircleCI](https://circleci.com/gh/chrisdotn/jsmnSol/tree/master.svg?style=svg)](https://circleci.com/gh/chrisdotn/jsmnSol/tree/master)
+
 `jsmnSol` is a port of the [jsmn](https://github.com/zserge/jsmn) JSON parser to Solidity, originally written in C. Its main purpose is to parse **small** JSON data on chain. Because string handling is complicated in Solidity and particularly expensive the usage should be restricted to small JSON data. However, it can help to reduce calls to oracles and deal with the responses on chain.
 
 ## Installation
