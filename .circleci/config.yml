@@ -18,6 +18,9 @@ jobs:
 
     working_directory: ~/repo
 
+    environment:
+      TEST_REPORTS: /tmp/test-reports
+
     steps:
       - checkout
 
