@@ -39,10 +39,9 @@ jobs:
       #     key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: sed -i -e "s/reporter: 'spec'/reporter: 'mocha-junit-reporter'/g" truffle.js
-
       - run:
           command: |
+            sed -i -e "s/reporter: 'spec'/reporter: 'mocha-junit-reporter'/g" truffle.js
             mkdir -p ${TEST_REPORTS}
             truffle test
             cp test-results.xml ${TEST_REPORTS}
