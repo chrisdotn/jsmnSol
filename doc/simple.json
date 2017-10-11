@@ -5,6 +5,3 @@
         "key1.3": true
     }
 }
-
-
-'{ "key1": { "key1.1": "value", "key1.2": 3, "key1.3": true, "key1.4": "val2"} }'
