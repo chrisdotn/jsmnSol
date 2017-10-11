@@ -19,7 +19,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-pragma solidity ^0.4.2;
+pragma solidity ^0.4.17;
 
 library JsmnSolLib {
 
@@ -45,13 +45,13 @@ library JsmnSolLib {
         int toksuper;
     }
 
-    function init(uint length) internal returns (Parser, Token[]) {
+    function init(uint length) internal pure returns (Parser, Token[]) {
         Parser memory p = Parser(0, 0, -1);
         Token[] memory t = new Token[](length);
         return (p, t);
     }
 
-    function allocateToken(Parser parser, Token[] tokens) internal returns (bool, Token) {
+    function allocateToken(Parser parser, Token[] tokens) internal pure returns (bool, Token) {
         if (parser.toknext >= tokens.length) {
             // no more space in tokens
             return (false, tokens[tokens.length-1]);
@@ -62,7 +62,7 @@ library JsmnSolLib {
         return (true, token);
     }
 
-    function fillToken(Token token, JsmnType jsmnType, uint start, uint end) internal {
+    function fillToken(Token token, JsmnType jsmnType, uint start, uint end) internal pure {
         token.jsmnType = jsmnType;
         token.start = start;
         token.startSet = true;
@@ -71,7 +71,7 @@ library JsmnSolLib {
         token.size = 0;
     }
 
-    function parseString(Parser parser, Token[] tokens, bytes s) internal returns (uint) {
+    function parseString(Parser parser, Token[] tokens, bytes s) internal pure returns (uint) {
         uint start = parser.pos;
         parser.pos++;
 
@@ -107,7 +107,7 @@ library JsmnSolLib {
         return RETURN_ERROR_PART;
     }
 
-    function parsePrimitive(Parser parser, Token[] tokens, bytes s) internal returns (uint) {
+    function parsePrimitive(Parser parser, Token[] tokens, bytes s) internal pure returns (uint) {
         bool found = false;
         uint start = parser.pos;
         byte c;
@@ -139,7 +139,7 @@ library JsmnSolLib {
         return RETURN_SUCCESS;
     }
 
-    function parse(string json, uint numberElements) internal returns (uint, Token[], uint) {
+    function parse(string json, uint numberElements) internal pure returns (uint, Token[], uint) {
         bytes memory s = bytes(json);
         var (parser, tokens) = init(numberElements);
 
@@ -277,7 +277,7 @@ library JsmnSolLib {
         return (RETURN_SUCCESS, tokens, parser.toknext);
     }
 
-    function getBytes(string json, uint start, uint end) internal returns (string) {
+    function getBytes(string json, uint start, uint end) internal pure returns (string) {
         bytes memory s = bytes(json);
         bytes memory result = new bytes(end-start);
         for (uint i=start; i<end; i++) {
@@ -287,12 +287,12 @@ library JsmnSolLib {
     }
 
     // parseInt
-    function parseInt(string _a) internal returns (int) {
+    function parseInt(string _a) internal pure returns (int) {
         return parseInt(_a, 0);
     }
 
     // parseInt(parseFloat*10^_b)
-    function parseInt(string _a, uint _b) internal returns (int) {
+    function parseInt(string _a, uint _b) internal pure returns (int) {
         bytes memory bresult = bytes(_a);
         int mint = 0;
         bool decimals = false;
@@ -315,7 +315,7 @@ library JsmnSolLib {
         return mint;
     }
 
-    function uint2str(uint i) internal returns (string){
+    function uint2str(uint i) internal pure returns (string){
         if (i == 0) return "0";
         uint j = i;
         uint len;
@@ -332,7 +332,7 @@ library JsmnSolLib {
         return string(bstr);
     }
 
-    function parseBool(string _a) returns (bool) {
+    function parseBool(string _a) public pure returns (bool) {
         if (strCompare(_a, 'true') == 0) {
             return true;
         } else {
@@ -340,7 +340,7 @@ library JsmnSolLib {
         }
     }
 
-    function strCompare(string _a, string _b) internal returns (int) {
+    function strCompare(string _a, string _b) internal pure returns (int) {
         bytes memory a = bytes(_a);
         bytes memory b = bytes(_b);
         uint minLength = a.length;
