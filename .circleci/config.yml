@@ -43,3 +43,6 @@ jobs:
 
       - store_artifacts:
           path: test-results.xml
+
+      - store_test_results:
+          path: test-results.xml
