@@ -10,7 +10,7 @@ contract TestReturnValues {
     uint constant RETURN_ERROR_PART = 2;
     uint constant RETURN_ERROR_NO_MEM = 3;
 
-    function testNotEnoughMemory() {
+    function testNotEnoughMemory() public {
         string memory json = '{ "key": "value", "key_2": 23, "key_3": true }';
 
         uint returnValue;
@@ -22,7 +22,7 @@ contract TestReturnValues {
         Assert.equal(returnValue, RETURN_ERROR_NO_MEM, 'There should not have been enough tokens to store the json.');
     }
 
-    function testUnescapedQuoteInString() {
+    function testUnescapedQuoteInString() public {
         string memory json = '{ "key1": { "key1.1": "value", "key1"2": 3, "key1.3": true } }';
         uint returnValue;
         JsmnSolLib.Token[] memory tokens;
@@ -32,7 +32,7 @@ contract TestReturnValues {
         Assert.equal(returnValue, RETURN_ERROR_INVALID_JSON, 'An unescaped quote should result in a RETURN_ERROR_INVALID_JSON');
     }
 
-    function testEscapedQuoteInString() {
+    function testEscapedQuoteInString() public {
         string memory json = '{ "k": "a\\"b" }';
         uint returnValue;
         JsmnSolLib.Token[] memory tokens;
@@ -46,7 +46,7 @@ contract TestReturnValues {
     }
 
 
-    function testNumberOfElements() {
+    function testNumberOfElements() public {
         string memory json = '{ "key": "value", "key_2": 23, "key_3": true }';
 
         uint returnValue;

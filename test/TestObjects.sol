@@ -10,7 +10,7 @@ contract TestObjects {
     uint constant RETURN_ERROR_PART = 2;
     uint constant RETURN_ERROR_NO_MEM = 3;
 
-    function testSimpleObject() {
+    function testSimpleObject() public {
         string memory json = '{"outerKey": {"innerKey": "value"}}';
 
         uint returnValue;

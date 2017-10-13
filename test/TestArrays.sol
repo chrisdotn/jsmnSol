@@ -10,7 +10,7 @@ contract TestArrays {
     uint constant RETURN_ERROR_PART = 2;
     uint constant RETURN_ERROR_NO_MEM = 3;
 
-    function testSimpleArray() {
+    function testSimpleArray() public {
         string memory json = '{"outerKey": [{"innerKey1": "value"}, {"innerKey2": "value"}]}';
 
         uint returnValue;

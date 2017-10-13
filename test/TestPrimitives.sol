@@ -10,7 +10,7 @@ contract TestPrimitives {
     uint constant RETURN_ERROR_PART = 2;
     uint constant RETURN_ERROR_NO_MEM = 3;
 
-    function testStringKeyValue() {
+    function testStringKeyValue() public {
         string memory json = '{"key": "value"}';
 
         uint returnValue;
@@ -24,7 +24,7 @@ contract TestPrimitives {
         Assert.equal(JsmnSolLib.getBytes(json, tokens[2].start, tokens[2].end), 'value', 'Not equal');
     }
 
-    function testLongerJson() {
+    function testLongerJson() public {
         string memory json = '{ "key1": { "key1.1": "value", "key1.2": 3, "key1.3": true, "key1.4": "val2"} }';
 
         uint returnValue;
@@ -63,7 +63,7 @@ contract TestPrimitives {
         Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'val2', 'Not equal');
     }
 
-    function testIntegerKeyValue() {
+    function testIntegerKeyValue() public {
         string memory json = '{"key": 23}';
 
         uint returnValue;
@@ -77,7 +77,7 @@ contract TestPrimitives {
         Assert.equal(JsmnSolLib.parseInt(JsmnSolLib.getBytes(json, tokens[2].start, tokens[2].end)), 23, 'Not equal');
     }
 
-    function testNegativeIntegerKeyValue() {
+    function testNegativeIntegerKeyValue() public {
         string memory json = '{"key": -4523}';
 
         uint returnValue;
@@ -91,7 +91,7 @@ contract TestPrimitives {
         Assert.equal(JsmnSolLib.parseInt(JsmnSolLib.getBytes(json, tokens[2].start, tokens[2].end)), -4523, 'Not equal');
     }
 
-    function testBoolKeyValue() {
+    function testBoolKeyValue() public {
         string memory json = '{"key": true}';
 
         uint returnValue;
@@ -105,7 +105,7 @@ contract TestPrimitives {
         Assert.isTrue(JsmnSolLib.parseBool(JsmnSolLib.getBytes(json, tokens[2].start, tokens[2].end)), 'Not equal');
     }
 
-    function testFloatKeyValue() {
+    function testFloatKeyValue() public {
         string memory json = '{"key": 23.45, "key2": 5, "key3": "23.66", "key4": "236.6"}';
 
         uint returnValue;

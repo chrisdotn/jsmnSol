@@ -10,7 +10,7 @@ contract TestUnicode {
     uint constant RETURN_ERROR_PART = 2;
     uint constant RETURN_ERROR_NO_MEM = 3;
 
-    function testUmlaut() {
+    function testUmlaut() public {
         string memory json = '{"key": "Möhrenbrot"}';
 
         uint returnValue;
@@ -25,7 +25,7 @@ contract TestUnicode {
         Assert.equal(JsmnSolLib.getBytes(json, t.start, t.end), 'Möhrenbrot', 'Problems with an umlaut');
     }
 
-    function testDiacritcs() {
+    function testDiacritcs() public {
         string memory json = '{"key": "svenskå", "key2": "smørgasbröd", "key3": "Fußball"}';
         uint returnValue;
         JsmnSolLib.Token[] memory tokens;
