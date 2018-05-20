@@ -20,7 +20,6 @@ contract TestObjects {
         (returnValue, tokens, actualNum) = JsmnSolLib.parse(json, 20);
         
         JsmnSolLib.Token memory t = tokens[4];
-        string memory jsonElement = JsmnSolLib.getBytes(json, t.start, t.end);
         
         Assert.equal(returnValue, RETURN_SUCCESS, 'Valid JSON should return a success.');
         Assert.isTrue(t.jsmnType == JsmnSolLib.JsmnType.STRING, 'Not an string');
