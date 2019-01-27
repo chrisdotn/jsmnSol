@@ -8,8 +8,8 @@ jobs:
     docker:
       # specify the version you desire here
       - image: chrisdotn/truffle-docker:0.0.4
-      - image: wbuchwalter/testrpc
-        command: testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
+      - image: trufflesuite/ganache-cli
+        command: ganache-cli -m 'scene kite dust inherit sample upset person below fancy drive mean place'
 
     working_directory: ~/repo
 
