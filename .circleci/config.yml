@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: chrisdotn/truffle-docker
+      - image: chrisdotn/truffle-docker:0.0.4
       - image: wbuchwalter/testrpc
         command: testrpc -m 'scene kite dust inherit sample upset person below fancy drive mean place'
 
