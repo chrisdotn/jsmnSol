@@ -1,0 +1,29 @@
+{
+  "name": "jsmnSol",
+  "version": "0.1.0-beta",
+  "description": "A JSON parser for solidity",
+  "main": "truffle.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npx truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisdotn/jsmnSol.git"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "json-parser",
+    "json"
+  ],
+  "author": "chrisdotn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chrisdotn/jsmnSol/issues"
+  },
+  "homepage": "https://github.com/chrisdotn/jsmnSol#readme"
+}
