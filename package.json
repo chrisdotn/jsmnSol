@@ -1,24 +1,29 @@
 {
   "name": "jsmnSol",
-  "version": "1.0.0",
-  "description": "Build: [![CircleCI](https://circleci.com/gh/chrisdotn/jsmnSol/tree/master.svg?style=svg)](https://circleci.com/gh/chrisdotn/jsmnSol/tree/master)",
+  "version": "0.1.0-beta",
+  "description": "A JSON parser for solidity",
   "main": "truffle.js",
   "directories": {
     "doc": "doc",
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx truffle test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/close-cross/jsmnSol.git"
+    "url": "git+https://github.com/chrisdotn/jsmnSol.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "json-parser",
+    "json"
+  ],
+  "author": "chrisdotn",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/close-cross/jsmnSol/issues"
+    "url": "https://github.com/chrisdotn/jsmnSol/issues"
   },
-  "homepage": "https://github.com/close-cross/jsmnSol#readme"
+  "homepage": "https://github.com/chrisdotn/jsmnSol#readme"
 }
